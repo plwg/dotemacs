@@ -35,3 +35,6 @@
 (add-to-list 'package-archives
              '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 
+;; magit
+
+(global-set-key (kbd "C-x g") 'magit-status)
