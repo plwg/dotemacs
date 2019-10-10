@@ -22,6 +22,13 @@
  )
 (find-file "~/Dropbox/org/*.org" t)
 (find-file "~/.emacs.d/init.el")
+
+;; IDO Mode
+
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
+
 ;; MELPA
 
 (require 'package)
