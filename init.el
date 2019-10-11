@@ -13,6 +13,7 @@
  '(custom-enabled-themes (quote (wheatgrass)))
  '(inhibit-startup-screen t)
  '(package-selected-packages (quote (magit)))
+ '(package-selected-packages (quote (smart-mode-line magit)))
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -38,3 +39,7 @@
 ;; magit
 
 (global-set-key (kbd "C-x g") 'magit-status)
+;;smart mode line
+(setq sml/no-confirm-load-theme t)
+(sml/setup)
+(setq sml/theme 'dark)
