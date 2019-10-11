@@ -45,6 +45,8 @@
 ;; magit
 
 (global-set-key (kbd "C-x g") 'magit-status)
+(global-set-key (kbd "C-x M-g") 'magit-dispatch)
+
 ;;smart mode line
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
