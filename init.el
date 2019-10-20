@@ -42,6 +42,8 @@
 (add-to-list 'package-archives
              '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 
+;(setq package-check-signature nil)
+
 ;; magit
 
 (global-set-key (kbd "C-x g") 'magit-status)
