@@ -24,7 +24,7 @@
  '(menu-bar-mode nil)
  '(package-selected-packages
    (quote
-    (dracula-theme dr-racket-like-unicode org-noter pdf-tools auto-complete evil smart-mode-line magit)))
+    (visual-fill-column nov dracula-theme dr-racket-like-unicode org-noter pdf-tools auto-complete evil smart-mode-line magit)))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -71,14 +71,15 @@
 
 (require 'evil)
 (evil-mode 1)
-(eval-after-load 'evil-core
-  '(evil-set-initial-state 'magit-popup-mode 'emacs))
+(eval-after-load 'evil-core '(evil-set-initial-state 'magit-popup-mode 'emacs))
+(evil-set-initial-state 'eshell-mode 'emacs)
 
 ;; pdf-tools
 
 (pdf-tools-install)
 
 ;; truncate line
+
 (set-default 'truncate-lines t)
 
 ;; org noter
@@ -86,3 +87,28 @@
 (setq org-noter-always-create-frame nil)
 (setq org-noter-default-notes-file-names '("marginalia.org")
       org-noter-notes-search-path '("~/Dropbox/org"))
+
+;; nov.el
+
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+(defun my-nov-font-setup () (face-remap-add-relative 'variable-pitch :family "Liberation Serif" :height 1.5))
+(add-hook 'nov-mode-hook 'my-nov-font-setup)
+(evil-set-initial-state 'nov-mode 'emacs)
+
+;; back up file setting 
+
+(defvar --backup-directory (concat user-emacs-directory "backups"))
+(if (not (file-exists-p --backup-directory))
+        (make-directory --backup-directory t))
+(setq backup-directory-alist `(("." . ,--backup-directory)))
+(setq make-backup-files t               ; backup of a file the first time it is saved.
+      backup-by-copying t               ; don't clobber symlinks
+      version-control t                 ; version numbers for backup files
+      delete-old-versions t             ; delete excess backup files silently
+      delete-by-moving-to-trash t
+      kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+      kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+      auto-save-default t               ; auto-save every buffer that visits a file
+      auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+      auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+      )
