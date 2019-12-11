@@ -1,43 +1,52 @@
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
 (package-initialize)
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
- '(custom-enabled-themes (quote (kaolin-temple)))
- '(custom-safe-themes
-   (quote
-    ("53993d7dc1db7619da530eb121aaae11c57eaf2a2d6476df4652e6f0bd1df740" "addfaf4c6f76ef957189d86b1515e9cf9fcd603ab6da795b82b79830eed0b284" "a70b47c87e9b0940f6fece46656200acbfbc55e129f03178de8f50934ac89f58" "f0a76ae259b7be77e59f98501957eb45a10af0839dd9eb29fdd5691ed74771d4" "ea44def1fa1b169161512d79a65f54385497a6a5fbc96d59c218f852ce35b2ab" "83ec4c87dac3a99036129a674ec2ef50468b3a854098e994e9b6a226ab63510b" "b46ee2c193e350d07529fcd50948ca54ad3b38446dcbd9b28d0378792db5c088" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
+ '(ansi-color-names-vector ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
  '(desktop-save-mode t)
- '(display-time-mode t)
- '(doc-view-resolution 200)
- '(fci-rule-color "#383838")
- '(font-use-system-font t)
- '(fringe-mode (quote (nil . 0)) nil (fringe))
- '(global-display-line-numbers-mode nil)
- '(inhibit-startup-screen t)
- '(menu-bar-mode nil)
+ '(fci-rule-color "#dedede")
  '(org-export-backends (quote (ascii html latex md)))
  '(package-selected-packages
    (quote
-    (cyberpunk-theme kaolin-themes visual-fill-column nov dracula-theme dr-racket-like-unicode org-noter pdf-tools auto-complete evil smart-mode-line magit)))
- '(scroll-bar-mode nil)
- '(tool-bar-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+    (kaolin-themes visual-fill-column nov dr-racket-like-unicode org-noter pdf-tools auto-complete evil smart-mode-line magit))))
+(custom-set-faces '(default ((t (:family "Ubuntu Mono" :foundry "DAMA" :slant normal :weight normal :height 120 :width normal)))))
 (find-file "~/Dropbox/org/*.org" t)
 (find-file "~/.emacs.d/init.el")
+
+;; misc
+
+(blink-cursor-mode 0)
+(setq
+ inhibit-startup-message t         
+ inhibit-startup-screen t          
+ cursor-in-non-selected-windows t  
+ echo-keystrokes 0.1              
+ initial-scratch-message nil     
+ sentence-end-double-space nil  
+ confirm-kill-emacs 'y-or-n-p  
+ display-time-default-load-average nil
+)
+
+(fset 'yes-or-no-p 'y-or-n-p) 
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+
+(setq scroll-margin 1
+      scroll-step 1
+      scroll-conservatively 10000
+      scroll-preserve-screen-position 1)
+(setq mouse-wheel-follow-mouse 't)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))     
+
+(setq show-paren-delay 0)
+(show-paren-mode 1)
+
+(display-time-mode 1)
+(global-display-line-numbers-mode 1)
+
+;; theme
+
+(load-theme 'kaolin-temple t)
 
 ;; IDO Mode
 
@@ -51,6 +60,7 @@
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+
 ;; magit
 
 (global-set-key (kbd "C-x g") 'magit-status)
@@ -70,17 +80,21 @@
 (setq org-src-fontify-natively t)
 (require 'org-tempo)
 (setq org-directory "~/Dropbox/org")
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
 
 ;; evil
 
 (require 'evil)
 (evil-mode 1)
-(eval-after-load 'evil-core '(evil-set-initial-state 'magit-popup-mode 'emacs))
+(evil-set-initial-state 'magit-popup-mode 'emacs)
+(evil-set-initial-state 'calculator-mode 'emacs)
 (evil-set-initial-state 'eshell-mode 'emacs)
+(evil-set-initial-state 'org-agenda-mode 'emacs)
 
 ;; pdf-tools
 
 (pdf-tools-install)
+(add-hook 'pdf-view-mode-hook (lambda (&optional dummy) (display-line-numbers-mode -1)))
 
 ;; truncate line
 
