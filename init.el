@@ -8,15 +8,25 @@
  '(ansi-color-names-vector
    ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
  '(blink-cursor-mode nil)
+ '(deft-default-extension "org" t)
+ '(deft-directory "/home/paul/Dropbox/org/")
+ '(deft-recursive t)
+ '(deft-time-format " %Y-%m-%d    ")
+ '(deft-use-filter-string-for-filename t)
  '(display-time-mode t)
  '(eshell-aliases-file "/home/paul/.bash_aliases")
  '(fci-rule-color "#dedede")
  '(global-display-line-numbers-mode t)
+ '(ledger-report-auto-refresh nil)
+ '(ledger-schedule-file "~/Dropbox/ledger/recurring.ledger")
+ '(ledger-schedule-look-forward 30)
  '(menu-bar-mode nil)
  '(org-export-backends (quote (ascii html latex md)))
+ '(org-roam-directory "/home/paul/Dropbox/org")
+ '(org-roam-link-title-format "R:%s")
  '(package-selected-packages
    (quote
-    (use-package deft company ivy org-roam ledger-mode kaolin-themes visual-fill-column dr-racket-like-unicode org-noter pdf-tools evil smart-mode-line magit)))
+    (feebleline delight use-package deft company ivy org-roam ledger-mode kaolin-themes visual-fill-column dr-racket-like-unicode org-noter pdf-tools evil magit)))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -62,7 +72,7 @@
 
 ;; theme
 
-(load-theme 'kaolin-dark t)
+(load-theme 'kaolin-valley-dark t)
 
 ;; package
 
@@ -75,11 +85,6 @@
 
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x M-g") 'magit-dispatch)
-
-;;smart mode line
-(setq sml/no-confirm-load-theme t)
-(sml/setup)
-(setq sml/theme 'respectful)
 
 ;; org Mode
 
@@ -248,12 +253,14 @@
                ("C-c n b" . org-roam-switch-to-buffer)
                ("C-c n g" . org-roam-graph-show))
               :map org-mode-map
-              (("C-c n i" . org-roam-insert))))
+              (("C-c n i" . org-roam-insert)))
+      :delight)
 ;; ivy
 
 (use-package ivy
   :hook
-  (after-init . ivy-mode))
+  (after-init . ivy-mode)
+  :delight)
 
 (use-package deft
   :after org
@@ -288,3 +295,18 @@
   (evil-set-initial-state 'org-agenda-mode 'emacs)
   (evil-set-initial-state 'calendar-mode 'emacs)
   (evil-set-initial-state 'deft-mode 'emacs))
+
+(use-package eldoc :delight)
+(use-package undo-tree :delight)
+(use-package eldoc :delight)
+(use-package    feebleline
+  :ensure       t
+  :config       (setq feebleline-msg-functions
+		      '((feebleline-line-number         :post "" :fmt "")
+			(feebleline-column-number       :pre "" :fmt "")
+			(feebleline-file-directory      :face feebleline-dir-face :post "")
+			(feebleline-file-or-buffer-name :face font-lock-keyword-face :post "")
+			(feebleline-file-modified-star  :face font-lock-warning-face :post "")
+			(feebleline-git-branch          :align right :face evil-ex-lazy-highlight :pre " ")
+			(feebleline-project-name        :align right :fmt "")))
+  (feebleline-mode 1))
