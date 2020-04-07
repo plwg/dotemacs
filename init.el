@@ -14,7 +14,6 @@
  '(deft-time-format " %Y-%m-%d    ")
  '(deft-use-filter-string-for-filename t)
  '(display-time-mode t)
- '(eshell-aliases-file "/home/paul/.bash_aliases")
  '(fci-rule-color "#dedede")
  '(global-display-line-numbers-mode t)
  '(ledger-report-auto-refresh nil)
@@ -26,7 +25,7 @@
  '(org-roam-link-title-format "R:%s")
  '(package-selected-packages
    (quote
-    (feebleline delight use-package deft company ivy org-roam ledger-mode kaolin-themes visual-fill-column dr-racket-like-unicode org-noter pdf-tools evil magit)))
+    (feebleline use-package deft company ivy org-roam ledger-mode kaolin-themes visual-fill-column dr-racket-like-unicode org-noter pdf-tools evil magit)))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -67,7 +66,6 @@
 (setq show-paren-delay 0)
 (show-paren-mode 1)
 
-(display-time-mode 1)
 (global-display-line-numbers-mode 1)
 
 ;; theme
@@ -127,96 +125,96 @@
 
 ;; blogging
 
-(setq org-publish-project-alist
-      '(
-	("org-publish-post"
-	 :base-directory "~/Dropbox/org/blog/_posts/"
-	 :base-extension "org"
-	 :publishing-directory "~/blog/plwg.github.io/_posts/"
-	 :recursive t
-	 :publishing-function org-md-publish-to-md
-	 :headline-levels 4
-	 :body-only t 
-	 )
+;(setq org-publish-project-alist
+      ;'(
+	;("org-publish-post"
+	 ;:base-directory "~/Dropbox/org/blog/_posts/"
+	 ;:base-extension "org"
+	 ;:publishing-directory "~/blog/plwg.github.io/_posts/"
+	 ;:recursive t
+	 ;:publishing-function org-md-publish-to-md
+	 ;:headline-levels 4
+	 ;:body-only t 
+	 ;)
 
-	("org-publish-attachment"
-	 :base-directory "~/Dropbox/org/blog/assets"
-	 :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php\\|jpeg"
-	 :publishing-directory "~/blog/plwg.github.io/assets/"
-	 :recursive t
-	 :publishing-function org-publish-attachment)
+	;("org-publish-attachment"
+	 ;:base-directory "~/Dropbox/org/blog/assets"
+	 ;:base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php\\|jpeg"
+	 ;:publishing-directory "~/blog/plwg.github.io/assets/"
+	 ;:recursive t
+	 ;:publishing-function org-publish-attachment)
 
-	("blog" :components ("org-publish-post" "org-publish-attachment"))
-	))
+	;("blog" :components ("org-publish-post" "org-publish-attachment"))
+	;))
 
-(tempo-define-template "highlight"
-		       '("#+begin_export html" n 
-			 "``` " p n
-			 "```" n
-			 "#+end_export")
-		       "<hl"
-		       'org-tempo-tags)
+;(tempo-define-template "highlight"
+		       ;'("#+begin_export html" n 
+			 ;"``` " p n
+			 ;"```" n
+			 ;"#+end_export")
+		       ;"<hl"
+		       ;'org-tempo-tags)
 
-(defun org-jekyll-post-link-follow (path)
-  (org-open-file-with-emacs path))
+;(defun org-jekyll-post-link-follow (path)
+  ;(org-open-file-with-emacs path))
 
-(defun org-jekyll-post-link-export (path desc format)
-  (cond
-   ((eq format 'html)
-    (format "<a href=\"{%% post_url %s %%}\">%s</a>" path desc))))
+;(defun org-jekyll-post-link-export (path desc format)
+  ;(cond
+   ;((eq format 'html)
+    ;(format "<a href=\"{%% post_url %s %%}\">%s</a>" path desc))))
 
-(org-add-link-type "jekyll-post" 'org-jekyll-post-link-follow 'org-jekyll-post-link-export)
+;(org-add-link-type "jekyll-post" 'org-jekyll-post-link-follow 'org-jekyll-post-link-export)
 
-(setq jekyll-directory "/home/paul/Dropbox/org/blog/")
-(setq jekyll-drafts-dir "_drafts/")
-(setq jekyll-posts-dir "_posts/")
-(setq jekyll-post-ext ".org")
-(setq jekyll-post-template "#+OPTIONS: toc:nil num:nil\nBEGIN_EXPORT html\n---\nlayout: post\ntitle: %s\nexcerpt: \ncategories:\n  -  \ntags:\n  -  \n---\n#+END_EXPORT\n\n* ")
+;(setq jekyll-directory "/home/paul/Dropbox/org/blog/")
+;(setq jekyll-drafts-dir "_drafts/")
+;(setq jekyll-posts-dir "_posts/")
+;(setq jekyll-post-ext ".org")
+;(setq jekyll-post-template "#+OPTIONS: toc:nil num:nil\nBEGIN_EXPORT html\n---\nlayout: post\ntitle: %s\nexcerpt: \ncategories:\n  -  \ntags:\n  -  \n---\n#+END_EXPORT\n\n* ")
 
-(defun jekyll-make-slug (s)
-  (replace-regexp-in-string
-   " " "-" (downcase
-	    (replace-regexp-in-string
-	     "[^A-Za-z0-9 ]" "" s))))
+;(defun jekyll-make-slug (s)
+  ;(replace-regexp-in-string
+   ;" " "-" (downcase
+	    ;(replace-regexp-in-string
+	     ;"[^A-Za-z0-9 ]" "" s))))
 
-(defun jekyll-yaml-escape (s)
-  (if (or (string-match ":" s)
-	  (string-match "\"" s))
-      (concat "\"" (replace-regexp-in-string "\"" "\\\\\"" s) "\"")
-    s))
+;(defun jekyll-yaml-escape (s)
+  ;(if (or (string-match ":" s)
+	  ;(string-match "\"" s))
+      ;(concat "\"" (replace-regexp-in-string "\"" "\\\\\"" s) "\"")
+    ;s))
 
-(defun jekyll-draft-post (title)
-  (interactive "sPost Title: ")
-  (let ((draft-file (concat jekyll-directory jekyll-drafts-dir
-			    (jekyll-make-slug title)
-			    jekyll-post-ext)))
-    (if (file-exists-p draft-file)
-	(find-file draft-file)
-      (find-file draft-file)
-      (auto-fill-mode 1)
-      (insert (format jekyll-post-template (jekyll-yaml-escape title))))))
+;(defun jekyll-draft-post (title)
+  ;(interactive "sPost Title: ")
+  ;(let ((draft-file (concat jekyll-directory jekyll-drafts-dir
+			    ;(jekyll-make-slug title)
+			    ;jekyll-post-ext)))
+    ;(if (file-exists-p draft-file)
+	;(find-file draft-file)
+      ;(find-file draft-file)
+      ;(auto-fill-mode 1)
+      ;(insert (format jekyll-post-template (jekyll-yaml-escape title))))))
 
-(defun jekyll-publish-post ()
-  (interactive)
-  (cond
-   ((not (equal
-	  (file-name-directory (buffer-file-name (current-buffer)))
-	  (concat jekyll-directory jekyll-drafts-dir)))
-    (message "This is not a draft post."))
-   ((buffer-modified-p)
-    (message "Can't publish post; buffer has modifications."))
-   (t
-    (let ((filename
-	   (concat jekyll-directory jekyll-posts-dir
-		   (format-time-string "%Y-%m-%d-")
-		   (file-name-nondirectory
-		    (buffer-file-name (current-buffer)))))
-	  (old-point (point)))
-      (rename-file (buffer-file-name (current-buffer))
-		   filename)
-      (kill-buffer nil)
-      (find-file filename)
-      (set-window-point (selected-window) old-point)))))
+;(defun jekyll-publish-post ()
+  ;(interactive)
+  ;(cond
+   ;((not (equal
+	  ;(file-name-directory (buffer-file-name (current-buffer)))
+	  ;(concat jekyll-directory jekyll-drafts-dir)))
+    ;(message "This is not a draft post."))
+   ;((buffer-modified-p)
+    ;(message "Can't publish post; buffer has modifications."))
+   ;(t
+    ;(let ((filename
+	   ;(concat jekyll-directory jekyll-posts-dir
+		   ;(format-time-string "%Y-%m-%d-")
+		   ;(file-name-nondirectory
+		    ;(buffer-file-name (current-buffer)))))
+	  ;(old-point (point)))
+      ;(rename-file (buffer-file-name (current-buffer))
+		   ;filename)
+      ;(kill-buffer nil)
+      ;(find-file filename)
+      ;(set-window-point (selected-window) old-point)))))
 
 ;; auto load setting
 
@@ -254,13 +252,12 @@
                ("C-c n g" . org-roam-graph-show))
               :map org-mode-map
               (("C-c n i" . org-roam-insert)))
-      :delight)
+ ) 
 ;; ivy
 
 (use-package ivy
   :hook
-  (after-init . ivy-mode)
-  :delight)
+  (after-init . ivy-mode))
 
 (use-package deft
   :after org
@@ -296,9 +293,6 @@
   (evil-set-initial-state 'calendar-mode 'emacs)
   (evil-set-initial-state 'deft-mode 'emacs))
 
-(use-package eldoc :delight)
-(use-package undo-tree :delight)
-(use-package eldoc :delight)
 (use-package    feebleline
   :ensure       t
   :config       (setq feebleline-msg-functions
@@ -307,6 +301,11 @@
 			(feebleline-file-directory      :face feebleline-dir-face :post "")
 			(feebleline-file-or-buffer-name :face font-lock-keyword-face :post "")
 			(feebleline-file-modified-star  :face font-lock-warning-face :post "")
-			(feebleline-git-branch          :align right :face evil-ex-lazy-highlight :pre " ")
+			(feebleline-git-branch          :align right :face evil-ex-lazy-highlight :pre "@" :post "")
 			(feebleline-project-name        :align right :fmt "")))
   (feebleline-mode 1))
+
+(use-package company
+  :ensure t
+  :config
+  (company-mode 1))
