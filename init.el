@@ -1,16 +1,32 @@
 (package-initialize)
-
+(setq package-enable-at-startup nil)
 (custom-set-variables
- '(ansi-color-names-vector ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
- '(desktop-save-mode t)
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
+ '(blink-cursor-mode nil)
+ '(display-time-mode t)
+ '(eshell-aliases-file "/home/paul/.bash_aliases")
  '(fci-rule-color "#dedede")
+ '(global-display-line-numbers-mode t)
+ '(menu-bar-mode nil)
  '(org-export-backends (quote (ascii html latex md)))
  '(package-selected-packages
    (quote
-    (kaolin-themes visual-fill-column nov dr-racket-like-unicode org-noter pdf-tools auto-complete evil smart-mode-line magit))))
-(custom-set-faces '(default ((t (:family "Ubuntu Mono" :foundry "DAMA" :slant normal :weight normal :height 120 :width normal)))))
-(find-file "~/Dropbox/org/*.org" t)
+    (use-package deft company ivy org-roam ledger-mode kaolin-themes visual-fill-column dr-racket-like-unicode org-noter pdf-tools evil smart-mode-line magit)))
+ '(show-paren-mode t)
+ '(tool-bar-mode nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Ubuntu Mono" :foundry "DAMA" :slant normal :weight normal :height 130 :width normal)))))
 (find-file "~/.emacs.d/init.el")
+(find-file "~/Dropbox/ledger/my.ledger")
 
 ;; misc
 
@@ -24,7 +40,7 @@
  sentence-end-double-space nil  
  confirm-kill-emacs 'y-or-n-p  
  display-time-default-load-average nil
-)
+ )
 
 (fset 'yes-or-no-p 'y-or-n-p) 
 (scroll-bar-mode -1)
@@ -46,13 +62,7 @@
 
 ;; theme
 
-(load-theme 'kaolin-temple t)
-
-;; IDO Mode
-
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
+(load-theme 'kaolin-dark t)
 
 ;; package
 
@@ -71,10 +81,6 @@
 (sml/setup)
 (setq sml/theme 'respectful)
 
-;; auto complete
-
-(ac-config-default)
-
 ;; org Mode
 
 (setq org-src-fontify-natively t)
@@ -82,19 +88,9 @@
 (setq org-directory "~/Dropbox/org")
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
 
-;; evil
-
-(require 'evil)
-(evil-mode 1)
-(evil-set-initial-state 'magit-popup-mode 'emacs)
-(evil-set-initial-state 'calculator-mode 'emacs)
-(evil-set-initial-state 'eshell-mode 'emacs)
-(evil-set-initial-state 'org-agenda-mode 'emacs)
-
-;; pdf-tools
-
-(pdf-tools-install)
-(add-hook 'pdf-view-mode-hook (lambda (&optional dummy) (display-line-numbers-mode -1)))
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
 
 ;; truncate line
 
@@ -106,18 +102,11 @@
 (setq org-noter-default-notes-file-names '("marginalia.org")
       org-noter-notes-search-path '("~/Dropbox/org"))
 
-;; nov.el
-
-(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-(defun my-nov-font-setup () (face-remap-add-relative 'variable-pitch :family "Liberation Serif" :height 1.5))
-(add-hook 'nov-mode-hook 'my-nov-font-setup)
-(evil-set-initial-state 'nov-mode 'emacs)
-
 ;; back up file setting 
 
 (defvar --backup-directory (concat user-emacs-directory "backups"))
 (if (not (file-exists-p --backup-directory))
-        (make-directory --backup-directory t))
+    (make-directory --backup-directory t))
 (setq backup-directory-alist `(("." . ,--backup-directory)))
 (setq make-backup-files t               ; backup of a file the first time it is saved.
       backup-by-copying t               ; don't clobber symlinks
@@ -156,12 +145,12 @@
 	))
 
 (tempo-define-template "highlight"
-           '("#+begin_export html" n 
-             "``` " p n
-             "```" n
-             "#+end_export")
-           "<hl"
-           'org-tempo-tags)
+		       '("#+begin_export html" n 
+			 "``` " p n
+			 "```" n
+			 "#+end_export")
+		       "<hl"
+		       'org-tempo-tags)
 
 (defun org-jekyll-post-link-follow (path)
   (org-open-file-with-emacs path))
@@ -182,22 +171,22 @@
 (defun jekyll-make-slug (s)
   (replace-regexp-in-string
    " " "-" (downcase
-            (replace-regexp-in-string
-             "[^A-Za-z0-9 ]" "" s))))
+	    (replace-regexp-in-string
+	     "[^A-Za-z0-9 ]" "" s))))
 
 (defun jekyll-yaml-escape (s)
   (if (or (string-match ":" s)
-          (string-match "\"" s))
+	  (string-match "\"" s))
       (concat "\"" (replace-regexp-in-string "\"" "\\\\\"" s) "\"")
     s))
 
 (defun jekyll-draft-post (title)
   (interactive "sPost Title: ")
   (let ((draft-file (concat jekyll-directory jekyll-drafts-dir
-                            (jekyll-make-slug title)
-                            jekyll-post-ext)))
+			    (jekyll-make-slug title)
+			    jekyll-post-ext)))
     (if (file-exists-p draft-file)
-        (find-file draft-file)
+	(find-file draft-file)
       (find-file draft-file)
       (auto-fill-mode 1)
       (insert (format jekyll-post-template (jekyll-yaml-escape title))))))
@@ -206,20 +195,96 @@
   (interactive)
   (cond
    ((not (equal
-          (file-name-directory (buffer-file-name (current-buffer)))
-          (concat jekyll-directory jekyll-drafts-dir)))
+	  (file-name-directory (buffer-file-name (current-buffer)))
+	  (concat jekyll-directory jekyll-drafts-dir)))
     (message "This is not a draft post."))
    ((buffer-modified-p)
     (message "Can't publish post; buffer has modifications."))
    (t
     (let ((filename
-           (concat jekyll-directory jekyll-posts-dir
-                   (format-time-string "%Y-%m-%d-")
-                   (file-name-nondirectory
-                    (buffer-file-name (current-buffer)))))
-          (old-point (point)))
+	   (concat jekyll-directory jekyll-posts-dir
+		   (format-time-string "%Y-%m-%d-")
+		   (file-name-nondirectory
+		    (buffer-file-name (current-buffer)))))
+	  (old-point (point)))
       (rename-file (buffer-file-name (current-buffer))
-                   filename)
+		   filename)
       (kill-buffer nil)
       (find-file filename)
       (set-window-point (selected-window) old-point)))))
+
+;; auto load setting
+
+(defun my-load-user-init-file-after-save ()
+  (when (string= (file-truename user-init-file) (file-truename (buffer-file-name)))
+    (let ((debug-on-error t)) (load (buffer-file-name)))))
+
+(add-hook 'after-save-hook #'my-load-user-init-file-after-save)
+
+;; org mode;; Use global IDs
+
+(require 'org-id)
+(setq org-id-link-to-org-use-id t)
+
+;; bind key to open indrect buffer
+
+(define-key org-mode-map (kbd "C-SPC") (lambda () (interactive) (org-tree-to-indirect-buffer) (other-window 1) (delete-other-windows)))
+
+;; bind key switch betweek window
+
+(global-set-key (kbd "C-;") #'other-window)
+
+;; org-roam
+
+(use-package org-roam
+      :hook 
+      (after-init . org-roam-mode)
+      :custom
+      (org-roam-directory "/home/paul/Dropbox/org")
+      (org-roam-link-title-format "R:%s")
+      :bind (:map org-roam-mode-map
+              (("C-c n l" . org-roam)
+               ("C-c n f" . org-roam-find-file)
+               ("C-c n b" . org-roam-switch-to-buffer)
+               ("C-c n g" . org-roam-graph-show))
+              :map org-mode-map
+              (("C-c n i" . org-roam-insert))))
+;; ivy
+
+(use-package ivy
+  :hook
+  (after-init . ivy-mode))
+
+(use-package deft
+  :after org
+  :bind
+  ("C-c n d" . deft)
+  :custom
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-time-format " %Y-%m-%d    ")
+  (deft-directory "/home/paul/Dropbox/org/"))
+
+(use-package ledger-mode
+  :bind
+  :custom
+  (ledger-report-auto-refresh nil)
+  (ledger-schedule-file "~/Dropbox/ledger/recurring.ledger")
+  (ledger-schedule-look-forward 30))
+
+(use-package pdf-tools
+  :init
+  (pdf-tools-install)
+  (add-hook 'pdf-view-mode-hook (lambda (&optional dummy) (display-line-numbers-mode -1))))
+
+(use-package evil
+  :hook 
+  (after-init . evil-mode)
+  :config
+  (evil-set-initial-state 'magit-popup-mode 'emacs)
+  (evil-set-initial-state 'calculator-mode 'emacs)
+  (evil-set-initial-state 'eshell-mode 'emacs)
+  (evil-set-initial-state 'org-agenda-mode 'emacs)
+  (evil-set-initial-state 'calendar-mode 'emacs)
+  (evil-set-initial-state 'deft-mode 'emacs))
