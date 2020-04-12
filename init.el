@@ -1,3 +1,4 @@
+(setq gc-cons-threshold 100000000)
 (package-initialize)
 (setq package-enable-at-startup nil)
 (custom-set-variables
@@ -8,24 +9,35 @@
  '(ansi-color-names-vector
    ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
  '(blink-cursor-mode nil)
+ '(custom-safe-themes
+   (quote
+    ("c19e5291471680e72d8bd98f8d6e84f781754a9e8fc089536cda3f0b7c3550e3" "6973f93f55e4a6ef99aa34e10cd476bc59e2f0c192b46ec00032fe5771afd9ad" default)))
  '(deft-default-extension "org" t)
  '(deft-directory "/home/paul/Dropbox/org/")
+ '(deft-file-limit 30)
  '(deft-recursive t)
  '(deft-time-format " %Y-%m-%d    ")
  '(deft-use-filter-string-for-filename t)
- '(display-time-mode t)
  '(fci-rule-color "#dedede")
- '(global-display-line-numbers-mode t)
+ '(fcitx-aggressive-setup nil t)
+ '(fcitx-prefix-keys-add "C-x" t)
+ '(fcitx-prefix-keys-turn-on nil t)
+ '(ivy-use-selectable-prompt t)
  '(ledger-report-auto-refresh nil)
  '(ledger-schedule-file "~/Dropbox/ledger/recurring.ledger")
  '(ledger-schedule-look-forward 30)
- '(menu-bar-mode nil)
+ '(line-spacing 0.2)
  '(org-export-backends (quote (ascii html latex md)))
  '(org-roam-directory "/home/paul/Dropbox/org")
+ '(org-roam-graph-exclude-matcher
+   (quote
+    ("inbox.org" "Note.org" "SLIPBOX.org" "Marginalia.org" "link.org" "Journal.org" "Buy.org" "Pinboard.org")))
+ '(org-roam-graph-executable "/usr/bin/dot")
+ '(org-roam-graph-extra-config (quote (("overlap" . "false"))))
  '(org-roam-link-title-format "R:%s")
  '(package-selected-packages
    (quote
-    (feebleline use-package deft company ivy org-roam ledger-mode kaolin-themes visual-fill-column dr-racket-like-unicode org-noter pdf-tools evil magit)))
+    (org-bullets poet-theme fcitx emojify markdown-mode feebleline use-package deft company ivy org-roam ledger-mode kaolin-themes visual-fill-column dr-racket-like-unicode org-noter pdf-tools evil magit)))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -34,12 +46,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Ubuntu Mono" :foundry "DAMA" :slant normal :weight normal :height 130 :width normal)))))
-(find-file "~/.emacs.d/init.el")
-(find-file "~/Dropbox/ledger/my.ledger")
-
+;(find-file "~/Dropbox/ledger/my.ledger")
+;(find-file "~/.emacs.d/init.el")
+(deft)
 ;; misc
 
-(blink-cursor-mode 0)
 (setq
  inhibit-startup-message t         
  inhibit-startup-screen t          
@@ -47,8 +58,6 @@
  echo-keystrokes 0.1              
  initial-scratch-message nil     
  sentence-end-double-space nil  
- confirm-kill-emacs 'y-or-n-p  
- display-time-default-load-average nil
  )
 
 (fset 'yes-or-no-p 'y-or-n-p) 
@@ -66,11 +75,10 @@
 (setq show-paren-delay 0)
 (show-paren-mode 1)
 
-(global-display-line-numbers-mode 1)
 
 ;; theme
 
-(load-theme 'kaolin-valley-dark t)
+(load-theme 'poet-dark t)
 
 ;; package
 
@@ -235,7 +243,7 @@
 
 ;; bind key switch betweek window
 
-(global-set-key (kbd "C-;") #'other-window)
+(global-set-key (kbd "C-'") #'other-window)
 
 ;; org-roam
 
@@ -244,26 +252,32 @@
       (after-init . org-roam-mode)
       :custom
       (org-roam-directory "/home/paul/Dropbox/org")
+      (org-roam-graph-exclude-matcher '("inbox.org" "SLIPBOX.org" "Marginalia.org" "link.org" "Journal.org" "Buy.org" "Pinboard.org"))
       (org-roam-link-title-format "R:%s")
+      (org-roam-graph-executable "/usr/bin/dot")
+      (org-roam-graph-extra-config '(("overlap" . "false")))
       :bind (:map org-roam-mode-map
               (("C-c n l" . org-roam)
                ("C-c n f" . org-roam-find-file)
                ("C-c n b" . org-roam-switch-to-buffer)
                ("C-c n g" . org-roam-graph-show))
               :map org-mode-map
-              (("C-c n i" . org-roam-insert)))
- ) 
+              (("C-c n i" . org-roam-insert)))) 
 ;; ivy
 
 (use-package ivy
   :hook
-  (after-init . ivy-mode))
+  (after-init . ivy-mode)
+  :custom
+  (ivy-use-selectable-prompt t))
 
 (use-package deft
   :after org
   :bind
   ("C-c n d" . deft)
   :custom
+  (deft-auto-save-interval 0.0)
+  (deft-file-limit 30)
   (deft-recursive t)
   (deft-use-filter-string-for-filename t)
   (deft-default-extension "org")
@@ -301,11 +315,36 @@
 			(feebleline-file-directory      :face feebleline-dir-face :post "")
 			(feebleline-file-or-buffer-name :face font-lock-keyword-face :post "")
 			(feebleline-file-modified-star  :face font-lock-warning-face :post "")
-			(feebleline-git-branch          :align right :face evil-ex-lazy-highlight :pre "@" :post "")
+			(feebleline-git-branch          :align right :face evil-ex-lazy-highlight :pre "" :post "")
 			(feebleline-project-name        :align right :fmt "")))
   (feebleline-mode 1))
 
 (use-package company
   :ensure t
   :config
-  (company-mode 1))
+  (global-company-mode 1))
+
+(use-package markdown-mode
+  :ensure t
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "pandoc"))
+
+(add-hook 'org-mode-hook
+	  (lambda ()
+	    (variable-pitch-mode 1)))
+
+(set-face-attribute 'default nil :family "Iosevka")
+(set-face-attribute 'fixed-pitch nil :family "Iosevka")
+(set-face-attribute 'variable-pitch nil :family "Libre Baskerville" :height 130)
+
+(fcitx-prefix-keys-turn-on)
+(fcitx-prefix-keys-add "C-x" "C-c" "C-h" "M-s" "M-o")
+(fcitx-aggressive-setup)
+
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+
