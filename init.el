@@ -12,12 +12,11 @@
       echo-keystrokes 0.1              
       initial-scratch-message nil     
       sentence-end-double-space nil)
-
+(fset 'display-startup-echo-area-message 'ignore)
 (fset 'yes-or-no-p 'y-or-n-p) 
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
-(show-paren-mode t)
 (blink-cursor-mode -1)
 (setq fci-rule-color "#dedede")
 (setq line-spacing 0.2)
@@ -28,8 +27,10 @@
 (setq mouse-wheel-follow-mouse 't)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))     
 
-(setq show-paren-delay 0)
-(show-paren-mode 1)
+(use-package show-paren-mode
+  :defer t
+  :config
+  (setq show-paren-delay 0))
 
 ;; theme
 
@@ -44,6 +45,7 @@
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+;(setq use-package-verbose t)
 
 
 (defvar --backup-directory (concat user-emacs-directory "backups"))
@@ -67,21 +69,23 @@
 (global-set-key (kbd "M-i") (lambda()(interactive)(find-file "~/Dropbox/org/inbox.org")))
 
 (use-package org-roam
-      :hook 
-      (after-init . org-roam-mode)
-      :config
-      (setq org-roam-directory "/home/paul/Dropbox/org")
-      (setq org-roam-graph-exclude-matcher '("inbox.org" "SLIPBOX.org" "Marginalia.org" "link.org" "Journal.org" "Buy.org" "Pinboard.org"))
-      (setq org-roam-link-title-format "R:%s")
-      (setq org-roam-graph-executable "/usr/bin/dot")
-      (setq org-roam-graph-extra-config '(("overlap" . "false")))
-      :bind (:map org-roam-mode-map
-              (("C-c n l" . org-roam)
-               ("C-c n f" . org-roam-find-file)
-               ("C-c n b" . org-roam-switch-to-buffer)
-               ("C-c n g" . org-roam-graph-show))
-              :map org-mode-map
-              (("C-c n i" . org-roam-insert)))) 
+  :defer 2
+  ;:hook
+  ;(after-init . org-roam-mode)
+  :bind (:map org-roam-mode-map
+	      (("C-c n l" . org-roam)
+	       ("C-c n f" . org-roam-find-file)
+	       ("C-c n b" . org-roam-switch-to-buffer)
+	       ("C-c n g" . org-roam-graph-show))
+	      :map org-mode-map
+	      (("C-c n i" . org-roam-insert)))
+  :config
+  (org-roam-mode)
+  (setq org-roam-directory "/home/paul/Dropbox/org")
+  (setq org-roam-graph-exclude-matcher '("inbox.org" "SLIPBOX.org" "Marginalia.org" "link.org" "Journal.org" "Buy.org" "Pinboard.org"))
+  (setq org-roam-link-title-format "R:%s")
+  (setq org-roam-graph-executable "/usr/bin/dot")
+  (setq org-roam-graph-extra-config '(("overlap" . "false")))) 
 
 (use-package ivy
   :hook
@@ -91,7 +95,6 @@
   (setq ivy-use-selectable-prompt t))
 
 (use-package deft
-  :after org
   :bind
   ("M-d" . deft)
   ("C-c n d" . deft)
@@ -105,12 +108,14 @@
   (setq deft-directory "/home/paul/Dropbox/org/"))
 
 (use-package ledger-mode
+  :defer t
   :config
   (setq ledger-report-auto-refresh nil)
   (setq ledger-schedule-file "~/Dropbox/ledger/recurring.ledger")
   (setq ledger-schedule-look-forward 30))
 
 (use-package pdf-tools
+  :defer t
   :config
   (pdf-tools-install)
   (add-hook 'pdf-view-mode-hook (lambda (&optional dummy) (display-line-numbers-mode -1))))
@@ -140,10 +145,12 @@
   (feebleline-mode 1))
 
 (use-package company
+  :defer 5
   :config
   (global-company-mode 1))
 
 (use-package markdown-mode
+  :defer t
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
@@ -158,15 +165,16 @@
 (use-package display-line-numbers-mode
   :hook prog-mode)
 
-(use-package ess)
+(use-package ess
+  :defer t)
 
 (use-package org-drill
-  :after org
+  :defer t
   :config
   (setq org-drill-add-random-noise-to-intervals-p t))
 
 (use-package org
-  :mode ("\\.org\\'" . org-mode)
+  :defer t
   :bind (("C-c l" . org-store-link)
 	 ("C-c a" . org-agenda)
 	 ("C-c c" . org-capture))
@@ -198,6 +206,7 @@
 	org-noter-notes-search-path '("~/Dropbox/org")))
 
 (use-package magit
+  :commands (magit-status magit-dispatch)
   :bind
   ("C-x g" . magit-status)
   ("C-x M-g" . magit-dispatch))
