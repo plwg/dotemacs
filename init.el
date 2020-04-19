@@ -2,9 +2,13 @@
 (package-initialize)
 (setq package-enable-at-startup nil)
 (custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ess org-bullets poet-theme fcitx emojify markdown-mode feebleline use-package deft company ivy org-roam ledger-mode kaolin-themes visual-fill-column dr-racket-like-unicode org-noter pdf-tools evil magit))))
+    (magit autothemer ghub goto-chg graphql ess org-bullets poet-theme fcitx emojify feebleline use-package deft company ivy kaolin-themes dr-racket-like-unicode evil))))
 
 (setq inhibit-startup-message t         
       inhibit-startup-screen t          
@@ -27,11 +31,6 @@
 (setq mouse-wheel-follow-mouse 't)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))     
 
-(use-package show-paren-mode
-  :defer t
-  :config
-  (setq show-paren-delay 0))
-
 ;; theme
 
 (load-theme 'poet-dark t)
@@ -45,8 +44,6 @@
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-;(setq use-package-verbose t)
-
 
 (defvar --backup-directory (concat user-emacs-directory "backups"))
 (if (not (file-exists-p --backup-directory))
@@ -67,18 +64,19 @@
 (global-set-key (kbd "C-;") #'other-window)
 (global-set-key (kbd "M-c") (lambda()(interactive)(find-file "~/.emacs.d/init.el")))
 (global-set-key (kbd "M-i") (lambda()(interactive)(find-file "~/Dropbox/org/inbox.org")))
+(global-set-key (kbd "M-l") (lambda()(interactive)(find-file "~/Dropbox/ledger/my.ledger")))
 
 (use-package org-roam
-  :defer 2
   ;:hook
   ;(after-init . org-roam-mode)
-  :bind (:map org-roam-mode-map
-	      (("C-c n l" . org-roam)
-	       ("C-c n f" . org-roam-find-file)
-	       ("C-c n b" . org-roam-switch-to-buffer)
-	       ("C-c n g" . org-roam-graph-show))
-	      :map org-mode-map
-	      (("C-c n i" . org-roam-insert)))
+  :commands (org-roam org-roam-find-file org-roam-insert org-roam-graph-show)
+  :bind (;:map org-roam-mode-map
+	 (("C-c n l" . org-roam)
+	  ("C-c n f" . org-roam-find-file)
+	  ("C-c n b" . org-roam-switch-to-buffer)
+	  ("C-c n g" . org-roam-graph-show))
+	 :map org-mode-map
+	 (("C-c n i" . org-roam-insert)))
   :config
   (org-roam-mode)
   (setq org-roam-directory "/home/paul/Dropbox/org")
@@ -95,6 +93,7 @@
   (setq ivy-use-selectable-prompt t))
 
 (use-package deft
+  :commands (deft)
   :bind
   ("M-d" . deft)
   ("C-c n d" . deft)
@@ -129,8 +128,7 @@
   (evil-set-initial-state 'eshell-mode 'emacs)
   (evil-set-initial-state 'org-agenda-mode 'emacs)
   (evil-set-initial-state 'calendar-mode 'emacs)
-  (evil-set-initial-state 'deft-mode 'emacs)
-  (evil-set-initial-state 'org-mode 'insert))
+  (evil-set-initial-state 'deft-mode 'emacs))
 
 (use-package    feebleline
   :ensure       t
@@ -165,13 +163,14 @@
 (use-package display-line-numbers-mode
   :hook prog-mode)
 
-(use-package ess
-  :defer t)
+(use-package ess :defer t)
 
 (use-package org-drill
-  :defer t
+  :commands (org-drill)
   :config
-  (setq org-drill-add-random-noise-to-intervals-p t))
+  (setq org-drill-hide-item-headings-p t)
+  (setq org-drill-add-random-noise-to-intervals-p t)
+  )
 
 (use-package org
   :defer t
@@ -185,7 +184,10 @@
   (add-hook 'org-mode-hook (lambda () (variable-pitch-mode 1)))
   (setq org-capture-templates '(("p" "pa code" entry
 				 (file "~/Dropbox/org/pa-note.org")
-				 "* Code Snippet :drill:\n%^{Question}\n** Code\n#+BEGIN_SRC\n\n#+END_SRC")))
+				 "* Code Snippet :drill:\n%^{Question}\n** Code\n#+BEGIN_SRC\n\n#+END_SRC")
+				("c" "pa concept" entry
+				 (file "~/Dropbox/org/pa-note.org")
+				 "* Concept :drill:\n%^{Concept}\n** Definition\n%^{Definition}")))
   (setq org-refile-targets '((nil :maxlevel . 9) (org-agenda-files :maxlevel . 9)))
   (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
   (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
@@ -200,6 +202,7 @@
 
 (use-package org-noter
   :after pdf-tools
+  :commands (org-noter)
   :config
   (setq org-noter-always-create-frame nil)
   (setq org-noter-default-notes-file-names '("marginalia.org")
@@ -211,8 +214,20 @@
   ("C-x g" . magit-status)
   ("C-x M-g" . magit-dispatch))
 
+(use-package show-paren-mode
+  :defer t
+  :config
+  (setq show-paren-delay 0))
+
 (defun my-load-user-init-file-after-save ()
   (when (string= (file-truename user-init-file) (file-truename (buffer-file-name)))
     (let ((debug-on-error t)) (load (buffer-file-name)))))
-
 (add-hook 'after-save-hook #'my-load-user-init-file-after-save)
+
+(setq gc-cons-threshold  800000)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
